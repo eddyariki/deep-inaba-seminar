@@ -23,7 +23,7 @@
         - california_data : *sklearn.bunch*
     - example:
     ``` python
-    from dataset/california import load_california
+    from dataset.california import load_california
     from sklearn.neighbors import KNeighborsRegressor
 
     # 分割されたデータの読み込み
