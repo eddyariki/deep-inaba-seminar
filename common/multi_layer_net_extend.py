@@ -102,6 +102,7 @@ class MultiLayerNetExtend:
 
         return self.last_layer.forward(y, t) + weight_decay
 
+    """ クラス分類用の精度計算メソッド
     def accuracy(self, x, t):
         y = self.predict(x, train_flg=False)
         y = np.argmax(y, axis=1)
@@ -109,6 +110,24 @@ class MultiLayerNetExtend:
 
         accuracy = np.sum(y == t) / float(x.shape[0])
         return accuracy
+    """
+
+    # x ... 説明変数, t ... 目的変数（1次元numpy配列）
+    def accuracy(self, x, t):
+        # 値の予測
+        y = self.predict(x, train_flg = False)
+
+        # t の偏差平方和（分散 * データ量）
+        S_t = np.var(t) * t.size
+
+        # y の偏差平方和
+        S_y = np.var(y) * y.size
+
+        # 決定係数 ... 0 <= R2 <= 1, 1に近いほど予測精度が高い
+        R2 = S_y / S_t
+
+        return R2
+        
 
     def numerical_gradient(self, x, t):
         """勾配を求める（数値微分）
