@@ -9,83 +9,57 @@ from common.multi_layer_net_regression import MultiLayerNetRegression
 from common.optimizer import SGD, Adam
 
 
-def __train(weight_init_std):
-    bn_network = MultiLayerNetRegression(input_size=784, hidden_size_list=[100, 100, 100, 100, 100], output_size=10, 
-                                    weight_init_std=weight_init_std, use_batchnorm=True)
-    network = MultiLayerNetRegression(input_size=784, hidden_size_list=[100, 100, 100, 100, 100], output_size=10,
-                                weight_init_std=weight_init_std)
-    optimizer = SGD(lr=learning_rate)
-    
-    train_acc_list = []
-    bn_train_acc_list = []
-    
-    iter_per_epoch = max(train_size / batch_size, 1)
-    epoch_cnt = 0
-    
-    for i in range(1000000000):
-        batch_mask = np.random.choice(train_size, batch_size)
-        x_batch = x_train[batch_mask]
-        t_batch = t_train[batch_mask]
-    
-        for _network in (bn_network, network):
-            grads = _network.gradient(x_batch, t_batch)
-            optimizer.update(_network.params, grads)
-    
-        if i % iter_per_epoch == 0:
-            train_acc = network.accuracy(x_train, t_train)
-            bn_train_acc = bn_network.accuracy(x_train, t_train)
-            train_acc_list.append(train_acc)
-            bn_train_acc_list.append(bn_train_acc)
-    
-            print("epoch:" + str(epoch_cnt) + " | " + str(train_acc) + " - " + str(bn_train_acc))
-    
-            epoch_cnt += 1
-            if epoch_cnt >= max_epochs:
-                break
-                
-    return train_acc_list, bn_train_acc_list
-
 
 # 未完成
 if __name__ == "__main__":
-    run = False
-    x_train, t_train, x_test, t_test = load_california()
+    run = True
+    x_train, x_test, y_train, y_test = load_california()
     # 学習データを削減
-    x_train = x_train[:1000]
-    t_train = t_train[:1000]
+    # x_train = x_train
+    # t_train = t_train[:1000]
 
     max_epochs = 20
     train_size = x_train.shape[0]
     batch_size = 100
     learning_rate = 0.01
-    print(x_train.shape)
-    print(t_train.shape)
+    print("x_train: ",x_train.shape)
+    print("y train: ",y_train.shape)
+    print("x_test: ",x_test.shape)
+    print("y_test: ",y_test.shape)
+
     if(run):
-        weight_scale_list = np.logspace(0, -4, num=16)
-        x = np.arange(max_epochs)
+       
+        #MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latiture, Longitude
+        network = MultiLayerNetRegression(input_size=8, hidden_size_list=[100, 100, 100, 100, 100], output_size=1,
+                                    weight_init_std=1.0)
+        optimizer = SGD(lr=learning_rate)
+        
+        train_acc_list = []
 
-        for i, w in enumerate(weight_scale_list):
-            print( "============== " + str(i+1) + "/16" + " ==============")
-            train_acc_list, bn_train_acc_list = __train(w)
+        iter_per_epoch = max(train_size / batch_size, 1)
+        epoch_cnt = 0
+        for i in range(1000000000):
+            batch_mask = np.random.choice(train_size, batch_size)
+            x_batch = x_train[batch_mask]
+            y_batch = y_train[batch_mask]
+        
+            grads = network.gradient(x_batch, y_batch)
+            optimizer.update(network.params, grads)
+        
+            if i % iter_per_epoch == 0:
+                train_acc = network.accuracy(x_train, y_train)
+                train_acc_list.append(train_acc)
+
+        
+                print("epoch:" + str(epoch_cnt) + " | " + str(train_acc))
+                epoch_cnt += 1
+                if epoch_cnt >= max_epochs:
+                    break
             
-            plt.subplot(4,4,i+1)
-            plt.title("W:" + str(w))
-            if i == 15:
-                plt.plot(x, bn_train_acc_list, label='Batch Normalization', markevery=2)
-                plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)
-            else:
-                plt.plot(x, bn_train_acc_list, markevery=2)
-                plt.plot(x, train_acc_list, linestyle="--", markevery=2)
-
-            plt.ylim(0, 1.0)
-            if i % 4:
-                plt.yticks([])
-            else:
-                plt.ylabel("accuracy")
-            if i < 12:
-                plt.xticks([])
-            else:
-                plt.xlabel("epochs")
-            plt.legend(loc='lower right')
+        val=network.predict(x_test[300])
+        print("Predict: ", x_test[300])
+        print("Result: ",  val)
+        x = np.arange(max_epochs)       
+        plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)
             
         plt.show()

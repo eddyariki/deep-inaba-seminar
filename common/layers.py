@@ -81,6 +81,7 @@ class SoftmaxWithLoss:
         return self.loss
 
     def backward(self, dout=1):
+        #FIX WITH DIMENSIONS
         batch_size = self.t.shape[0]
         if self.t.size == self.y.size: # 教師データがone-hot-vectorの場合
             dx = (self.y - self.t) / batch_size
@@ -98,14 +99,13 @@ class IdentityWithMSE:
     def __init__(self):
         self.loss = None
         self.y = None
-        self.x = None
+        self.t = None
     
     def forward(self, x, t):
         self.t = t
         self.y = identity_function(x)
         #sum_squared_error: 0.5 * np.sum((y-t)**2)
         self.loss = sum_squared_error(self.y, self.t)
-
         return self.loss
 
     def backward(self, dout=1):
@@ -115,13 +115,9 @@ class IdentityWithMSE:
         cross entropy error
         """
         batch_size = self.t.shape[0]
-        if self.t.size == self.y.size: # 教師データがone-hot-vectorの場合
-            dx = (self.y - self.t) / batch_size
-        else:
-            dx = self.y.copy()
-            dx[np.arange(batch_size), self.t] -= 1
-            dx = dx / batch_size
-        
+        dx = self.y.copy()
+        dx = (self.y - self.t) / batch_size
+        print(dx.shape)
         return dx
 
 class Dropout:
