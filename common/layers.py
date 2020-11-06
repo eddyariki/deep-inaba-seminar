@@ -81,7 +81,7 @@ class SoftmaxWithLoss:
         return self.loss
 
     def backward(self, dout=1):
-        #FIX WITH DIMENSIONS
+        
         batch_size = self.t.shape[0]
         if self.t.size == self.y.size: # 教師データがone-hot-vectorの場合
             dx = (self.y - self.t) / batch_size
@@ -114,6 +114,7 @@ class IdentityWithMSE:
         have same backward propagation as softmax with 
         cross entropy error
         """
+        #FIX WITH DIMENSIONS
         batch_size = self.t.shape[0]
         dx = self.y.copy()
         dx = (self.y - self.t) / batch_size
