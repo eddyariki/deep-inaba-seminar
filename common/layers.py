@@ -114,7 +114,6 @@ class IdentityWithMSE:
         cross entropy error
         """
 
-        #FIX WITH DIMENSIONS
         batch_size = self.t.shape[0]
 
         dx = self.y.copy()

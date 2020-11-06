@@ -93,25 +93,7 @@ class MultiLayerNetRegression:
 
         return self.last_layer.forward(y, t) + weight_decay
 
-    def accuracy(self, x, t):        
-
-        # y = self.predict(x)
-        
-        # accuracy = 
-        # # e = y - t
-
-        # # e_sqrd_sum = np.sum(e**2, axis=0)
-        
-
-        # # e2 = y - y.mean()
-
-        # # e2_sqrd_sum = np.sum(e2**2, axis=0)
-
-
-        # # accuracy = 1 - e_sqrd_sum/(e2_sqrd_sum+10e-5)
-
-        # return accuracy
-
+    def accuracy(self, x, t):       
          # 値の予測
         y = self.predict(x)
 
