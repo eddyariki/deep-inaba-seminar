@@ -3,26 +3,16 @@ import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 import matplotlib.pyplot as plt
-from dataset.mnist import load_mnist
-from common.multi_layer_net_extend import MultiLayerNetExtend
+from dataset.california import load_california
+# from common.multi_layer_net_extend import MultiLayerNetExtend
+from common.multi_layer_net_regression import MultiLayerNetRegression
 from common.optimizer import SGD, Adam
-
-(x_train, t_train), (x_test, t_test) = load_mnist(normalize=True)
-
-# 学習データを削減
-x_train = x_train[:1000]
-t_train = t_train[:1000]
-
-max_epochs = 20
-train_size = x_train.shape[0]
-batch_size = 100
-learning_rate = 0.01
 
 
 def __train(weight_init_std):
-    bn_network = MultiLayerNetExtend(input_size=784, hidden_size_list=[100, 100, 100, 100, 100], output_size=10, 
+    bn_network = MultiLayerNetRegression(input_size=784, hidden_size_list=[100, 100, 100, 100, 100], output_size=10, 
                                     weight_init_std=weight_init_std, use_batchnorm=True)
-    network = MultiLayerNetExtend(input_size=784, hidden_size_list=[100, 100, 100, 100, 100], output_size=10,
+    network = MultiLayerNetRegression(input_size=784, hidden_size_list=[100, 100, 100, 100, 100], output_size=10,
                                 weight_init_std=weight_init_std)
     optimizer = SGD(lr=learning_rate)
     
@@ -56,32 +46,46 @@ def __train(weight_init_std):
     return train_acc_list, bn_train_acc_list
 
 
-# 3.グラフの描画==========
-weight_scale_list = np.logspace(0, -4, num=16)
-x = np.arange(max_epochs)
+# 未完成
+if __name__ == "__main__":
+    run = False
+    x_train, t_train, x_test, t_test = load_california()
+    # 学習データを削減
+    x_train = x_train[:1000]
+    t_train = t_train[:1000]
 
-for i, w in enumerate(weight_scale_list):
-    print( "============== " + str(i+1) + "/16" + " ==============")
-    train_acc_list, bn_train_acc_list = __train(w)
-    
-    plt.subplot(4,4,i+1)
-    plt.title("W:" + str(w))
-    if i == 15:
-        plt.plot(x, bn_train_acc_list, label='Batch Normalization', markevery=2)
-        plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)
-    else:
-        plt.plot(x, bn_train_acc_list, markevery=2)
-        plt.plot(x, train_acc_list, linestyle="--", markevery=2)
+    max_epochs = 20
+    train_size = x_train.shape[0]
+    batch_size = 100
+    learning_rate = 0.01
+    print(x_train.shape)
+    print(t_train.shape)
+    if(run):
+        weight_scale_list = np.logspace(0, -4, num=16)
+        x = np.arange(max_epochs)
 
-    plt.ylim(0, 1.0)
-    if i % 4:
-        plt.yticks([])
-    else:
-        plt.ylabel("accuracy")
-    if i < 12:
-        plt.xticks([])
-    else:
-        plt.xlabel("epochs")
-    plt.legend(loc='lower right')
-    
-plt.show()
+        for i, w in enumerate(weight_scale_list):
+            print( "============== " + str(i+1) + "/16" + " ==============")
+            train_acc_list, bn_train_acc_list = __train(w)
+            
+            plt.subplot(4,4,i+1)
+            plt.title("W:" + str(w))
+            if i == 15:
+                plt.plot(x, bn_train_acc_list, label='Batch Normalization', markevery=2)
+                plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)
+            else:
+                plt.plot(x, bn_train_acc_list, markevery=2)
+                plt.plot(x, train_acc_list, linestyle="--", markevery=2)
+
+            plt.ylim(0, 1.0)
+            if i % 4:
+                plt.yticks([])
+            else:
+                plt.ylabel("accuracy")
+            if i < 12:
+                plt.xticks([])
+            else:
+                plt.xlabel("epochs")
+            plt.legend(loc='lower right')
+            
+        plt.show()
