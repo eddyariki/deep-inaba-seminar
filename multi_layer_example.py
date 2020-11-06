@@ -3,7 +3,9 @@ import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 import matplotlib.pyplot as plt
-from dataset.california import load_california
+# from dataset.california import load_california
+# from dataset.boston import my_load_boston
+from dataset.easy_data import load_easy_data
 # from common.multi_layer_net_extend import MultiLayerNetExtend
 from common.multi_layer_net_regression import MultiLayerNetRegression
 from common.optimizer import SGD, Adam
@@ -13,17 +15,17 @@ import time
 # 未完成
 if __name__ == "__main__":
     run = True
-    x_train, x_test, y_train, y_test = load_california()
+    x_train, x_test, y_train, y_test = load_easy_data()
     x_train_full = x_train[:]
     y_train_full = y_train[:]
     # 学習データを削減
-    x_train = x_train[:1000]
-    y_train = y_train[:1000]
+    x_train = x_train
+    y_train = y_train
 
-    max_epochs = 15
+    max_epochs = 200
     train_size = x_train.shape[0]
-    batch_size = 200
-    learning_rate = 0.005
+    batch_size = 20
+    learning_rate = 0.02
     y_train = y_train.reshape((y_train.shape[0],1))
     y_test = y_test.reshape((y_test.shape[0],1))
     print("x_train: ",x_train.shape)
@@ -34,8 +36,8 @@ if __name__ == "__main__":
     if(run):
        
         #MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latiture, Longitude
-        network = MultiLayerNetRegression(input_size=8, hidden_size_list=[100,100,100,100,100,100,100], output_size=1,
-                                    weight_init_std=.04)
+        network = MultiLayerNetRegression(input_size=1, hidden_size_list=[100,100,100,100], output_size=1,
+                                    weight_init_std=.05)
         optimizer = SGD(lr=learning_rate)
         
         train_acc_list = []
@@ -69,11 +71,11 @@ if __name__ == "__main__":
         plt.show()
 
 
-        guess = network.predict(x_train_full[3300:3401])
+        guess = network.predict(x_test)
         plt.plot(guess, color="red", linestyle="--")
 
-        answer = y_train_full
-        # plt.figure(figsize=(20,5))
-        plt.plot(answer[3300:3401], color='blue')
+        answer = y_test
+
+        plt.plot(range(answer.shape[0]),answer, color='blue')
     
         plt.show()
