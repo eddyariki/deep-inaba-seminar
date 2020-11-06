@@ -7,21 +7,23 @@ from dataset.california import load_california
 # from common.multi_layer_net_extend import MultiLayerNetExtend
 from common.multi_layer_net_regression import MultiLayerNetRegression
 from common.optimizer import SGD, Adam
-
+import time
 
 
 # 未完成
 if __name__ == "__main__":
     run = True
     x_train, x_test, y_train, y_test = load_california()
+    x_train_full = x_train[:]
+    y_train_full = y_train[:]
     # 学習データを削減
     x_train = x_train[:1000]
     y_train = y_train[:1000]
 
-    max_epochs = 20
+    max_epochs = 15
     train_size = x_train.shape[0]
-    batch_size = 100
-    learning_rate = 0.01
+    batch_size = 200
+    learning_rate = 0.005
     y_train = y_train.reshape((y_train.shape[0],1))
     y_test = y_test.reshape((y_test.shape[0],1))
     print("x_train: ",x_train.shape)
@@ -32,8 +34,8 @@ if __name__ == "__main__":
     if(run):
        
         #MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latiture, Longitude
-        network = MultiLayerNetRegression(input_size=8, hidden_size_list=[100, 100, 100, 100, 100], output_size=1,
-                                    weight_init_std=1.0)
+        network = MultiLayerNetRegression(input_size=8, hidden_size_list=[100,100,100,100,100,100,100], output_size=1,
+                                    weight_init_std=.04)
         optimizer = SGD(lr=learning_rate)
         
         train_acc_list = []
@@ -47,6 +49,11 @@ if __name__ == "__main__":
 
             grads = network.gradient(x_batch, y_batch)
             optimizer.update(network.params, grads)
+
+            train_acc = network.accuracy(x_train, y_train)
+            
+            # print("TEST",train_acc)
+
             if i % iter_per_epoch == 0:
                 train_acc = network.accuracy(x_train, y_train)
                 train_acc_list.append(train_acc)
@@ -59,5 +66,14 @@ if __name__ == "__main__":
         
         x = np.arange(max_epochs)       
         plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)
-            
+        plt.show()
+
+
+        guess = network.predict(x_train_full[3300:3401])
+        plt.plot(guess, color="red", linestyle="--")
+
+        answer = y_train_full
+        # plt.figure(figsize=(20,5))
+        plt.plot(answer[3300:3401], color='blue')
+    
         plt.show()
