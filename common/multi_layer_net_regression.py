@@ -5,7 +5,7 @@ import numpy as np
 from collections import OrderedDict
 from common.layers import *
 from common.gradient import numerical_gradient
-
+from sklearn.metrics import r2_score
 
 class MultiLayerNetRegression:
     """全結合による多層ニューラルネットワーク
@@ -86,7 +86,6 @@ class MultiLayerNetRegression:
         損失関数の値
         """
         y = self.predict(x)
-
         weight_decay = 0
         for idx in range(1, self.hidden_layer_num + 2):
             W = self.params['W' + str(idx)]
@@ -94,13 +93,38 @@ class MultiLayerNetRegression:
 
         return self.last_layer.forward(y, t) + weight_decay
 
-    def accuracy(self, x, t):
-        y = self.predict(x)
-        y = np.argmax(y, axis=1)
-        if t.ndim != 1 : t = np.argmax(t, axis=1)
+    def accuracy(self, x, t):        
 
-        accuracy = np.sum(y == t) / float(x.shape[0])
-        return accuracy
+        # y = self.predict(x)
+        
+        # accuracy = 
+        # # e = y - t
+
+        # # e_sqrd_sum = np.sum(e**2, axis=0)
+        
+
+        # # e2 = y - y.mean()
+
+        # # e2_sqrd_sum = np.sum(e2**2, axis=0)
+
+
+        # # accuracy = 1 - e_sqrd_sum/(e2_sqrd_sum+10e-5)
+
+        # return accuracy
+
+         # 値の予測
+        y = self.predict(x)
+
+        # t の偏差平方和（分散 * データ量）
+        S_t = np.var(t) * t.size
+
+        # y の偏差平方和
+        S_y = np.var(y) * y.size
+
+        # 決定係数 ... 0 <= R2 <= 1, 1に近いほど予測精度が高い
+        R2 = S_y / S_t
+
+        return R2
 
     def numerical_gradient(self, x, t):
         """勾配を求める（数値微分）
@@ -139,13 +163,12 @@ class MultiLayerNetRegression:
             grads['W1']、grads['W2']、...は各層の重み
             grads['b1']、grads['b2']、...は各層のバイアス
         """
+
         # forward
         self.loss(x, t)
-
         # backward
         dout = 1
         dout = self.last_layer.backward(dout)
-
         layers = list(self.layers.values())
         layers.reverse()
         for layer in layers:

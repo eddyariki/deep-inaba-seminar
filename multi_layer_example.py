@@ -15,13 +15,15 @@ if __name__ == "__main__":
     run = True
     x_train, x_test, y_train, y_test = load_california()
     # 学習データを削減
-    # x_train = x_train
-    # t_train = t_train[:1000]
+    x_train = x_train[:1000]
+    y_train = y_train[:1000]
 
     max_epochs = 20
     train_size = x_train.shape[0]
     batch_size = 100
     learning_rate = 0.01
+    y_train = y_train.reshape((y_train.shape[0],1))
+    y_test = y_test.reshape((y_test.shape[0],1))
     print("x_train: ",x_train.shape)
     print("y train: ",y_train.shape)
     print("x_test: ",x_test.shape)
@@ -42,10 +44,9 @@ if __name__ == "__main__":
             batch_mask = np.random.choice(train_size, batch_size)
             x_batch = x_train[batch_mask]
             y_batch = y_train[batch_mask]
-        
+
             grads = network.gradient(x_batch, y_batch)
             optimizer.update(network.params, grads)
-        
             if i % iter_per_epoch == 0:
                 train_acc = network.accuracy(x_train, y_train)
                 train_acc_list.append(train_acc)
@@ -55,10 +56,7 @@ if __name__ == "__main__":
                 epoch_cnt += 1
                 if epoch_cnt >= max_epochs:
                     break
-            
-        val=network.predict(x_test[300])
-        print("Predict: ", x_test[300])
-        print("Result: ",  val)
+        
         x = np.arange(max_epochs)       
         plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)
             

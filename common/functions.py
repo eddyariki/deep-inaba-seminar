@@ -35,12 +35,12 @@ def softmax(x):
 
 def sum_squared_error(y, t):
     #FIX
-    if y.ndim == 1:
-        t = t.reshape(1, t.size)
-        y = y.reshape(1,y.shape)
+    # if y.ndim == 1:
+    #     t = t.reshape(1, t.size)
+    #     y = y.reshape(1,y.shape)
     # batch_size = y.shape[0]
 
-
+    
     return 0.5 * np.sum((y-t)**2)
 
 

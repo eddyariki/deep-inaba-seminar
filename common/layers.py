@@ -89,7 +89,6 @@ class SoftmaxWithLoss:
             dx = self.y.copy()
             dx[np.arange(batch_size), self.t] -= 1
             dx = dx / batch_size
-        
         return dx
 class IdentityWithMSE:
     """
@@ -114,11 +113,12 @@ class IdentityWithMSE:
         have same backward propagation as softmax with 
         cross entropy error
         """
+
         #FIX WITH DIMENSIONS
         batch_size = self.t.shape[0]
+
         dx = self.y.copy()
-        dx = (self.y - self.t) / batch_size
-        print(dx.shape)
+        dx = (self.y - self.t) / float(batch_size)
         return dx
 
 class Dropout:
