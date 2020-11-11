@@ -177,7 +177,7 @@ class MultiLayerNetRegression:
 
         Returns
         -------
-            None
+        None
         """
         all_size_list = [self.input_size] + self.hidden_size_list + [self.output_size]
         try:
