@@ -20,32 +20,51 @@ class MultiLayerNetRegression:
         'relu'または'he'を指定した場合は「Heの初期値」を設定
         'sigmoid'または'xavier'を指定した場合は「Xavierの初期値」を設定
     weight_decay_lambda : Weight Decay（L2ノルム）の強さ
+    preset_params: 学習済み重みとバイアスを使う場合
     """
     def __init__(self, input_size, hidden_size_list, output_size,
-                 activation='relu', weight_init_std='relu', weight_decay_lambda=0):
+                 activation='relu', weight_init_std='relu', weight_decay_lambda=0, preset_params=None):
         self.input_size = input_size
         self.output_size = output_size
         self.hidden_size_list = hidden_size_list
         self.hidden_layer_num = len(hidden_size_list)
         self.weight_decay_lambda = weight_decay_lambda
-        self.params = {}
+        if(preset_params==None):
+            print("Initializing Weights and Bias")
+            self.params = {}
 
-        # 重みの初期化
-        self.__init_weight(weight_init_std)
+            # 重みの初期化
+            self.__init_weight(weight_init_std)
 
-        # レイヤの生成
-        activation_layer = {'sigmoid': Sigmoid, 'relu': Relu}
-        self.layers = OrderedDict()
-        for idx in range(1, self.hidden_layer_num+1):
+            # レイヤの生成
+            activation_layer = {'sigmoid': Sigmoid, 'relu': Relu}
+            self.layers = OrderedDict()
+            for idx in range(1, self.hidden_layer_num+1):
+                self.layers['Affine' + str(idx)] = Affine(self.params['W' + str(idx)],
+                                                        self.params['b' + str(idx)])
+                self.layers['Activation_function' + str(idx)] = activation_layer[activation]()
+
+            idx = self.hidden_layer_num + 1
             self.layers['Affine' + str(idx)] = Affine(self.params['W' + str(idx)],
-                                                      self.params['b' + str(idx)])
-            self.layers['Activation_function' + str(idx)] = activation_layer[activation]()
+                self.params['b' + str(idx)])
 
-        idx = self.hidden_layer_num + 1
-        self.layers['Affine' + str(idx)] = Affine(self.params['W' + str(idx)],
-            self.params['b' + str(idx)])
+            self.last_layer = IdentityWithMSE()
+        else:
+            print("Loading in preset Weights and Bias")
+            self.params = preset_params
+            # レイヤの生成
+            activation_layer = {'sigmoid': Sigmoid, 'relu': Relu}
+            self.layers = OrderedDict()
+            for idx in range(1, self.hidden_layer_num+1):
+                self.layers['Affine' + str(idx)] = Affine(self.params['W' + str(idx)],
+                                                        self.params['b' + str(idx)])
+                self.layers['Activation_function' + str(idx)] = activation_layer[activation]()
 
-        self.last_layer = IdentityWithMSE()
+            idx = self.hidden_layer_num + 1
+            self.layers['Affine' + str(idx)] = Affine(self.params['W' + str(idx)],
+                self.params['b' + str(idx)])
+
+            self.last_layer = IdentityWithMSE()
 
     def __init_weight(self, weight_init_std):
         """重みの初期値設定
@@ -168,23 +187,3 @@ class MultiLayerNetRegression:
 
         return grads
     
-    def load_preset(self, params):
-        """学習済みの重みをプリセットする
-
-        Parameters
-        ----------
-        params: 学習済みの重みとバイアス
-
-        Returns
-        -------
-        None
-        """
-        all_size_list = [self.input_size] + self.hidden_size_list + [self.output_size]
-        try:
-            if(len(params)/2!=len(all_size_list)-1):
-                raise Exception("Params size does not match network size.")
-        except Exception:
-            print("An error occurred while loading preset")
-            raise
-        self.params = params
-

@@ -44,9 +44,6 @@ def load_california(split = True, debug = False, normalize = True):
     if(normalize):
         x_tmp = X_df.abs()
         
-        print(X_df)
-        print(x_tmp)
-        
         n = [x_tmp["MedInc"].max(), 1, 1, 1, 1, 1, 1, 1]
         X = X/n
         

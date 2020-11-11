@@ -26,19 +26,15 @@ if __name__ == "__main__":
     y_test = y_test.reshape((y_test.shape[0],1))
 
     if(run):
-       
-        #MedInc, HouseAge, AveRooms, AveBedrms, Population, AveOccup, Latiture, Longitude
+        params = load_params("test1")
         network = MultiLayerNetRegression(
             input_size=8, 
             hidden_size_list=[
             100,1000,100,
             ], 
             output_size=1,
+            preset_params=params
             )
-            
-        params = load_params("test1")
-
-        network.load_preset(params)
 
         guess = network.predict(x_test[500:550])
         plt.plot(guess, color="red", linestyle="--")
