@@ -82,7 +82,6 @@ save_params(params, network.input_size, network.hidden_size_list, network.output
 
 - **予測** ``regression_predict.py & common/util.py load_params``
 ```python
-
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset.california import load_california
