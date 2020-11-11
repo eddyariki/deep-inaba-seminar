@@ -22,7 +22,7 @@ class MultiLayerNet:
     weight_decay_lambda : Weight Decay（L2ノルム）の強さ
     """
     def __init__(self, input_size, hidden_size_list, output_size,
-                 activation='relu', weight_init_std='relu', weight_decay_lambda=0):
+                 activation='relu', weight_init_std='relu', weight_decay_lambda=0, regression = False):
         self.input_size = input_size
         self.output_size = output_size
         self.hidden_size_list = hidden_size_list
@@ -44,8 +44,10 @@ class MultiLayerNet:
         idx = self.hidden_layer_num + 1
         self.layers['Affine' + str(idx)] = Affine(self.params['W' + str(idx)],
             self.params['b' + str(idx)])
-
-        self.last_layer = SoftmaxWithLoss()
+        if(regression):
+            self.last_layer = IdentityWithMSE()
+        else:
+            self.last_layer = SoftmaxWithLoss()
 
     def __init_weight(self, weight_init_std):
         """重みの初期値設定

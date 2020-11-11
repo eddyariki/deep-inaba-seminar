@@ -1,6 +1,44 @@
 # coding: utf-8
 import numpy as np
 import time
+import pickle 
+
+def save_params(params, file_name="params_output"):
+    """
+    学習された重みとバイアスをpickleファイルに書き出す
+    既に存在するファイルは上書きされる
+    Parameters
+    ----------
+    params: 学習済み重みとバイアス
+    file_name: 書き出しのファイル名
+    Returns
+    -------
+    None
+    """
+    try:
+        with open(file_name+".pickle", "wb") as handle:
+            pickle.dump(params, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        print("Saved output to: " + file_name + ".pickle")
+    except Exception as e:
+        print(e)
+
+def load_params(file_name="params_output"):
+    """
+    学習された重みとバイアスのpickleファイルを読み込む
+    Parameters
+    ----------
+    file_name: pickleファイル名
+    Returns
+    -------
+    params: 辞書型重みとバイアス
+    """
+    try:
+        with open(file_name+".pickle", "rb") as handle:
+            params = pickle.load(handle)
+            print("Loaded: "+ file_name + ".pickle")
+        return params
+    except Exception as e:
+        print(e)
 
 def smooth_curve(x):
     """損失関数のグラフを滑らかにするために用いる

@@ -41,7 +41,7 @@ def sum_squared_error(y, t):
     batch_size = y.shape[0]
 
     
-    return 0.5 * np.sum((y-t)**2)/ batch_size
+    return 0.5 * np.sum((y-t)**2)/batch_size
 
 
 def cross_entropy_error(y, t):

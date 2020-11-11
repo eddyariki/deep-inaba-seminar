@@ -90,6 +90,7 @@ class SoftmaxWithLoss:
             dx[np.arange(batch_size), self.t] -= 1
             dx = dx / batch_size
         return dx
+        
 class IdentityWithMSE:
     """
     Output function: Identity (恒等関数)

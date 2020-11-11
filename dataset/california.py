@@ -1,18 +1,21 @@
 from sklearn.datasets import fetch_california_housing
 from sklearn.model_selection import train_test_split
+import pandas as pd
+import matplotlib.pyplot as plt
 
-def load_california(split = True, debug = False):
+
+def load_california(split = True, debug = False, normalize = True):
     california_data = fetch_california_housing(data_home = "./")
 
     features = california_data["feature_names"]
     X = california_data["data"]
     y = california_data["target"]
 
-    if debug:
-
-        import pandas as pd
-        import matplotlib.pyplot as plt
-
+    
+    X_df = pd.DataFrame(X, columns = features)
+    y_df = pd.DataFrame(y, columns = ["HousePrice"])
+    data = pd.concat([X_df, y_df], axis = 1)
+    if(debug):
         print("ABOUT DATA")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
         print(california_data["DESCR"])
@@ -38,7 +41,35 @@ def load_california(split = True, debug = False):
             ax.set_ylabel("HousePrice")
         plt.show()
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n")
-
+    if(normalize):
+        x_tmp = X_df.abs()
+        
+        print(X_df)
+        print(x_tmp)
+        
+        n = [x_tmp["MedInc"].max(), 1, 1, 1, 1, 1, 1, 1]
+        X = X/n
+        
+        n = [1, x_tmp["HouseAge"].max(), 1, 1, 1, 1, 1, 1]
+        X = X/n
+        
+        n = [1, 1, x_tmp["AveRooms"].max(), 1, 1, 1, 1, 1]
+        X = X/n
+        
+        n = [1, 1, 1, x_tmp["AveBedrms"].max(), 1, 1, 1, 1]
+        X = X/n
+        
+        n = [1, 1, 1, 1, x_tmp["Population"].max(), 1, 1, 1]
+        X = X/n
+        
+        n = [1, 1, 1, 1, 1, x_tmp["AveOccup"].max(), 1, 1]
+        X = X/n
+        
+        n = [1, 1, 1, 1, 1, 1, x_tmp["Latitude"].max(), 1]
+        X = X/n
+        
+        n = [1, 1, 1, 1, 1, 1, 1, x_tmp["Longitude"].max()]
+        X = X/n
     if split:
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
 
@@ -48,3 +79,5 @@ def load_california(split = True, debug = False):
 
 if __name__ == "__main__":
     load_california(debug = True)
+
+

@@ -95,10 +95,12 @@ class MultiLayerNetRegression:
         return self.last_layer.forward(y, t) + weight_decay
 
     def accuracy(self, x, t):       
-         # 値の予測
+        # 値の予測
         
         y = self.predict(x)
 
+        #Check
+        
         # t の偏差平方和（分散 * データ量）
         S_t = np.var(t) * t.size
 
@@ -165,3 +167,24 @@ class MultiLayerNetRegression:
             grads['b' + str(idx)] = self.layers['Affine' + str(idx)].db
 
         return grads
+    
+    def load_preset(self, params):
+        """学習済みの重みをプリセットする
+
+        Parameters
+        ----------
+        params: 学習済みの重みとバイアス
+
+        Returns
+        -------
+            None
+        """
+        all_size_list = [self.input_size] + self.hidden_size_list + [self.output_size]
+        try:
+            if(len(params)/2!=len(all_size_list)-1):
+                raise Exception("Params size does not match network size.")
+        except Exception:
+            print("An error occurred while loading preset")
+            raise
+        self.params = params
+
