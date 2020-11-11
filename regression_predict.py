@@ -13,7 +13,7 @@ if __name__ == "__main__":
     y_test = y_test.reshape((y_test.shape[0],1))
 
     #パラメータを読み込む
-    params_input = load_params("11-11-2020_14-10-55")
+    params_input = load_params("11-11-2020_19-08-00")
 
     #データ確認
     print(params_input["input_size"],params_input["hidden_size_list"],params_input["output_size"])
