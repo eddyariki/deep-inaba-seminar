@@ -76,7 +76,13 @@ params = network.params
 now = datetime.now()
 
 #作成時間をファイル名として保存(.pickleは省く)
-save_params(params, network.input_size, network.hidden_size_list, network.output_size, now.strftime("%m-%d-%Y_%H-%M-%S"))
+save_params(
+    params, 
+    network.input_size, 
+    network.hidden_size_list, 
+    network.output_size, 
+    now.strftime("%m-%d-%Y_%H-%M-%S")
+)
 
 ```
 
