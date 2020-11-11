@@ -1,16 +1,14 @@
 # coding: utf-8
-import sys, os
-sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset.california import load_california
 # from dataset.boston import my_load_boston
-from dataset.easy_data import load_easy_data, load_easy_data_sin
-# from common.multi_layer_net_extend import MultiLayerNetExtend
+# from dataset.easy_data import load_easy_data, load_easy_data_sin
+
 from common.multi_layer_net_regression import MultiLayerNetRegression
 from common.optimizer import SGD, Adam
-from common.util import save_params, load_params
-import time
+from common.util import save_params  #学習結果を保存したい場合
+from datetime import datetime
 
 
 # 未完成
@@ -27,6 +25,8 @@ if __name__ == "__main__":
     x_train = x_train[:300]
     y_train = y_train[:300]
 
+
+    
     max_epochs = 500
 
     train_size = x_train.shape[0]
@@ -59,6 +59,7 @@ if __name__ == "__main__":
 
         epoch_cnt = 0
 
+        #学習
         for i in range(1000000000):
             batch_mask = np.random.choice(train_size, batch_size)
 
@@ -80,10 +81,12 @@ if __name__ == "__main__":
                 if epoch_cnt >= max_epochs:
                     break
 
-        
+        #書き出し
         params = network.params
-        save_params(params, network.input_size, network.hidden_size_list, network.output_size, "test1")
+        now = datetime.now()
+        save_params(params, network.input_size, network.hidden_size_list, network.output_size, now.strftime("%m-%d-%Y_%H-%M-%S"))
 
+        #プロット
         x = np.arange(max_epochs)       
         plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)
         plt.show()
