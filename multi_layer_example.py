@@ -27,7 +27,7 @@ if __name__ == "__main__":
     x_train = x_train[:300]
     y_train = y_train[:300]
 
-    max_epochs = 1000
+    max_epochs = 500
 
     train_size = x_train.shape[0]
     batch_size = 100
@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
         
         params = network.params
-        save_params(params, "test1")
+        save_params(params, network.input_size, network.hidden_size_list, network.output_size, "test1")
 
         x = np.arange(max_epochs)       
         plt.plot(x, train_acc_list, linestyle = "--", label='Normal(without BatchNorm)', markevery=2)

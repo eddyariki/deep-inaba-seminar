@@ -3,21 +3,31 @@ import numpy as np
 import time
 import pickle 
 
-def save_params(params, file_name="params_output"):
+def save_params(params, 
+            input_size, 
+            hidden_size_list, 
+            output_size, 
+            file_name="params_output"):
     """
     学習された重みとバイアスをpickleファイルに書き出す
     既に存在するファイルは上書きされる
     Parameters
     ----------
     params: 学習済み重みとバイアス
+    inputs: 
     file_name: 書き出しのファイル名
     Returns
     -------
     None
     """
+    params_output = {}
+    params_output["input_size"] = input_size
+    params_output["hidden_size_list"] = hidden_size_list, 
+    params_output["output_size"] = output_size, 
+    params_output["params"] = params
     try:
         with open(file_name+".pickle", "wb") as handle:
-            pickle.dump(params, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(params_output, handle, protocol=pickle.HIGHEST_PROTOCOL)
         print("Saved output to: " + file_name + ".pickle")
     except Exception as e:
         print(e)

@@ -26,14 +26,13 @@ if __name__ == "__main__":
     y_test = y_test.reshape((y_test.shape[0],1))
 
     if(run):
-        params = load_params("test1")
+        params_input = load_params("test1")
+        print(params_input["input_size"],params_input["hidden_size_list"],params_input["output_size"])
         network = MultiLayerNetRegression(
-            input_size=8, 
-            hidden_size_list=[
-            100,1000,100,
-            ], 
-            output_size=1,
-            preset_params=params
+            input_size=params_input["input_size"], 
+            hidden_size_list=params_input["hidden_size_list"][0], 
+            output_size=params_input["output_size"][0],
+            preset_params=params_input["params"]
             )
 
         guess = network.predict(x_test[500:550])
